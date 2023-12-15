@@ -32,7 +32,7 @@ Interface Exporter Action generates an NPM package with your interfaces ABIs:
 - name: Use Node.js
   uses: actions/setup-node@v3
   with:
-    node-version: 16
+    node-version: 18
     registry-url: "https://registry.npmjs.org"
 
 - name: Install dependencies
