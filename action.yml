@@ -22,5 +22,5 @@ outputs:
   passed:
     description: 'boolean describing if the test passed or not'
 runs:
-  using: 'node18'
+  using: node20
   main: 'dist/index.js'
