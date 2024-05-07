@@ -14,7 +14,7 @@ export const copySolidityFiles = (baseDir: string, filesDir: string, destination
 
     for (const filePath of filesPaths) {
       const file = fse.readFileSync(filePath, 'utf8');
-      const relativeFile = transformRemappings(file);
+      const relativeFile = transformRemappings(file, filePath);
 
       // Copy the file to the destination directory
       const relativeFilePath = filePath.substring(filesDir.length + 1);

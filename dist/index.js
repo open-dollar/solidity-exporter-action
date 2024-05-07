@@ -41,7 +41,7 @@ const copySolidityFiles = (baseDir, filesDir, destinationDir) => {
             throw err;
         for (const filePath of filesPaths) {
             const file = fs_extra_1.default.readFileSync(filePath, 'utf8');
-            const relativeFile = (0, transformRemappings_1.transformRemappings)(file);
+            const relativeFile = (0, transformRemappings_1.transformRemappings)(file, filePath);
             // Copy the file to the destination directory
             const relativeFilePath = filePath.substring(filesDir.length + 1);
             fs_extra_1.default.outputFileSync(path_1.default.join(filesDestination, relativeFilePath), relativeFile);
@@ -261,8 +261,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.transformRemappings = void 0;
+const path_1 = __importDefault(__nccwpck_require__(1017));
 const fs_extra_1 = __importDefault(__nccwpck_require__(5630));
-const transformRemappings = (file) => {
+const transformRemappings = (file, filePath) => {
     const fileLines = file.split('\n');
     // Initialize remappings array to an empty array
     let remappings = [];
@@ -305,9 +306,11 @@ const transformRemappings = (file) => {
             return line;
         }
         const remappingOrigin = remapping[0];
-        const remappingDestination = remapping[1];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const remappingDestination = path_1.default.relative(filePath, remapping[1]);
+        console.log(filePath, remapping[1], remappingDestination);
         const dependencyDirectory = line.replace(remappingOrigin, remappingDestination);
-        line = `import '` + dependencyDirectory;
+        line = dependencyDirectory;
         return line;
     })
         .join('\n');

@@ -1,6 +1,7 @@
+import path from 'path';
 import fse from 'fs-extra';
 
-export const transformRemappings = (file: string): string => {
+export const transformRemappings = (file: string, filePath: string): string => {
   const fileLines = file.split('\n');
 
   // Initialize remappings array to an empty array
@@ -48,11 +49,12 @@ export const transformRemappings = (file: string): string => {
       }
 
       const remappingOrigin = remapping[0];
-      const remappingDestination = remapping[1];
-
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      const remappingDestination = path.relative(filePath, remapping[1]);
+      console.log(filePath, remapping[1], remappingDestination);
       const dependencyDirectory = line.replace(remappingOrigin, remappingDestination);
 
-      line = `import '` + dependencyDirectory;
+      line = dependencyDirectory;
 
       return line;
     })
