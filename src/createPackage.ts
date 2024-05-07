@@ -13,7 +13,7 @@ export const createPackage = (
   exportType: ExportType,
 ) => {
   // Empty export destination directory
-  const destinationDir = `export/${packageName}-${exportType}`;
+  const destinationDir = `export/${packageName}/${exportType}`;
   fse.emptyDirSync(destinationDir);
 
   console.log('Installing dependencies');
