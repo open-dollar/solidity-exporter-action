@@ -24,7 +24,7 @@ export const createPackage = (
   if (!inputPackageJson) throw new Error('package.json not found');
   // Create custom package.json in the export directory
   const packageJson: PackageJson = {
-    name: packageName,
+    name: `${packageName}/${exportType}`,
     version: inputPackageJson.version,
     dependencies: {
       ...inputPackageJson.dependencies,
