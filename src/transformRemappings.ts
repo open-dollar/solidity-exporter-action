@@ -32,12 +32,13 @@ export const transformRemappings = (file: string, filePath: string): string => {
 
       const remapping = remappings.find(([find]) => line.match(find));
 
+      const modulesKey = 'node_modules/';
+
       if (!remapping) {
         // Transform:
         // import '../../../node_modules/some-file.sol';
         // into:
         // import 'some-file.sol';
-        const modulesKey = 'node_modules/';
 
         if (line.includes(modulesKey)) {
           line = `import '` + line.substring(line.indexOf(modulesKey) + modulesKey.length);
@@ -48,13 +49,19 @@ export const transformRemappings = (file: string, filePath: string): string => {
         return line;
       }
 
-      const remappingOrigin = remapping[0];
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const remappingDestination = path.relative(filePath, remapping[1]);
-      console.log(filePath, remapping[1], remappingDestination);
-      const dependencyDirectory = line.replace(remappingOrigin, remappingDestination);
+      // Skip remapping dependencies eg. @openzeppelin
+      // eslint-disable @typescript-eslint/no-unsafe-call
+      if (remapping && remapping[1].includes(modulesKey)) return line;
 
-      line = dependencyDirectory;
+      const [keep, existingPath] = line.split(`'`);
+      const fileName = existingPath.split(remapping[0])[1];
+
+      const remappingDestination = path.relative(filePath, remapping[1]);
+
+      const newPath = path.join(remappingDestination, fileName);
+      const adjustedPath = newPath.startsWith('../') ? newPath.substring(3) : newPath;
+
+      line = `${keep}'${adjustedPath}';`;
 
       return line;
     })

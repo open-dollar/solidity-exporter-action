@@ -291,12 +291,12 @@ const transformRemappings = (file, filePath) => {
         if (!line.match(/^\s*import /i))
             return line;
         const remapping = remappings.find(([find]) => line.match(find));
+        const modulesKey = 'node_modules/';
         if (!remapping) {
             // Transform:
             // import '../../../node_modules/some-file.sol';
             // into:
             // import 'some-file.sol';
-            const modulesKey = 'node_modules/';
             if (line.includes(modulesKey)) {
                 line = `import '` + line.substring(line.indexOf(modulesKey) + modulesKey.length);
             }
@@ -305,12 +305,16 @@ const transformRemappings = (file, filePath) => {
             }
             return line;
         }
-        const remappingOrigin = remapping[0];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // Skip remapping dependencies eg. @openzeppelin
+        // eslint-disable @typescript-eslint/no-unsafe-call
+        if (remapping && remapping[1].includes(modulesKey))
+            return line;
+        const [keep, existingPath] = line.split(`'`);
+        const fileName = existingPath.split(remapping[0])[1];
         const remappingDestination = path_1.default.relative(filePath, remapping[1]);
-        console.log(filePath, remapping[1], remappingDestination);
-        const dependencyDirectory = line.replace(remappingOrigin, remappingDestination);
-        line = dependencyDirectory;
+        const newPath = path_1.default.join(remappingDestination, fileName);
+        const adjustedPath = newPath.startsWith('../') ? newPath.substring(3) : newPath;
+        line = `${keep}'${adjustedPath}';`;
         return line;
     })
         .join('\n');
