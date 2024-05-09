@@ -65,8 +65,8 @@ export const transformRemappings = (file: string, filePath: string): string => {
       let adjustedPath = newPath;
       if (dds === 1) adjustedPath = adjustedPath.substring(1); // replace "../" with "./"
       else if (dds > 1) adjustedPath = adjustedPath.substring(3); // replace "../../" with "../"
-
       line = `${keep}'${adjustedPath}';`;
+      console.log(existingPath, newPath, line);
       return line;
     })
     .join('\n');
