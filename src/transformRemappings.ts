@@ -59,10 +59,14 @@ export const transformRemappings = (file: string, filePath: string): string => {
       const remappingDestination = path.relative(filePath, remapping[1]);
 
       const newPath = path.join(remappingDestination, fileName);
-      const adjustedPath = newPath.startsWith('../') ? newPath.substring(3) : newPath;
+
+      // path.relative assumes arguments are directories, so we must correct
+      const dds = newPath.split('../').length - 1;
+      let adjustedPath = newPath;
+      if (dds === 1) adjustedPath = adjustedPath.substring(1); // replace "../" with "./"
+      else if (dds > 1) adjustedPath = adjustedPath.substring(3); // replace "../../" with "../"
 
       line = `${keep}'${adjustedPath}';`;
-
       return line;
     })
     .join('\n');
