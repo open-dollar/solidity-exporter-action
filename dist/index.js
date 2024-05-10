@@ -74,7 +74,7 @@ const child_process_1 = __nccwpck_require__(2081);
 const copySolidityFiles_1 = __nccwpck_require__(9676);
 const createReadmeAndLicense_1 = __nccwpck_require__(161);
 const constants_1 = __nccwpck_require__(5105);
-const createPackage = (outDir, interfacesDir, contractsDir, librariesDir, packageName, exportType) => {
+const createPackage = (outDir, interfacesDir, contractsDir, librariesDir, scriptsDir, testsDir, packageName, exportType) => {
     // Empty export destination directory
     const destinationDir = `export/${packageName}/${exportType}`;
     fs_extra_1.default.emptyDirSync(destinationDir);
@@ -97,6 +97,8 @@ const createPackage = (outDir, interfacesDir, contractsDir, librariesDir, packag
     if (exportType === constants_1.ExportType.CONTRACTS) {
         (0, copySolidityFiles_1.copySolidityFiles)(outDir, contractsDir, destinationDir);
         (0, copySolidityFiles_1.copySolidityFiles)(outDir, librariesDir, destinationDir);
+        (0, copySolidityFiles_1.copySolidityFiles)(outDir, scriptsDir, destinationDir);
+        (0, copySolidityFiles_1.copySolidityFiles)(outDir, testsDir, destinationDir);
     }
     (0, createReadmeAndLicense_1.createReadmeAndLicense)(packageJson.name, exportType, destinationDir);
     console.log(`Created README and LICENSE`);
@@ -233,12 +235,14 @@ function run() {
             const interfacesDir = core.getInput('interfaces');
             const contractsDir = core.getInput('contracts') || '';
             const librariesDir = core.getInput('libraries') || '';
+            const scriptsDir = core.getInput('scripts') || '';
+            const testsDir = core.getInput('tests') || '';
             const exportType = core.getInput('export_type');
             if (!Object.values(constants_1.ExportType).includes(exportType)) {
                 throw new Error(`Invalid input for export_type. Valid inputs are: ${Object.values(constants_1.ExportType).join(', ')}`);
             }
             core.debug(`Creating package`);
-            (0, createPackage_1.createPackage)(outDir, interfacesDir, contractsDir, librariesDir, packageName, exportType);
+            (0, createPackage_1.createPackage)(outDir, interfacesDir, contractsDir, librariesDir, scriptsDir, testsDir, packageName, exportType);
             core.setOutput('passed', true);
         }
         catch (e) {
@@ -291,7 +295,7 @@ const transformRemappings = (file, filePath) => {
     return fileLines
         .map(line => {
         // Just modify imports
-        if (!line.match(/^\s*import /i))
+        if (!line.match(/} from '/g))
             return line;
         const remapping = remappings.find(([find]) => line.match(find));
         const modulesKey = 'node_modules/';

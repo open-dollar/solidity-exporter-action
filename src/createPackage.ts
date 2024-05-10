@@ -10,6 +10,8 @@ export const createPackage = (
   interfacesDir: string,
   contractsDir: string,
   librariesDir: string,
+  scriptsDir: string,
+  testsDir: string,
   packageName: string,
   exportType: ExportType,
 ) => {
@@ -40,6 +42,8 @@ export const createPackage = (
   if (exportType === ExportType.CONTRACTS) {
     copySolidityFiles(outDir, contractsDir, destinationDir);
     copySolidityFiles(outDir, librariesDir, destinationDir);
+    copySolidityFiles(outDir, scriptsDir, destinationDir);
+    copySolidityFiles(outDir, testsDir, destinationDir);
   }
 
   createReadmeAndLicense(packageJson.name, exportType, destinationDir);

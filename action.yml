@@ -21,7 +21,12 @@ inputs:
   libraries:
     description: 'path to the libraries directory'
     required: false
-    default: 'solidity/libraries'
+  scripts:
+    description: 'path to the scripts directory'
+    required: false
+  tests:
+    description: 'path to the tests directory'
+    required: false
   export_type:
     description: '`interface` for exporting only the interfaces and their ABIs, `contracts` for exporting the contracts, interfaces and their ABIs as well'
     required: false

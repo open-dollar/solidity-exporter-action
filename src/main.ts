@@ -11,6 +11,8 @@ async function run(): Promise<void> {
     const interfacesDir = core.getInput('interfaces');
     const contractsDir = core.getInput('contracts') || '';
     const librariesDir = core.getInput('libraries') || '';
+    const scriptsDir = core.getInput('scripts') || '';
+    const testsDir = core.getInput('tests') || '';
     const exportType = core.getInput('export_type') as ExportType;
 
     if (!Object.values(ExportType).includes(exportType)) {
@@ -18,7 +20,7 @@ async function run(): Promise<void> {
     }
 
     core.debug(`Creating package`);
-    createPackage(outDir, interfacesDir, contractsDir, librariesDir, packageName, exportType);
+    createPackage(outDir, interfacesDir, contractsDir, librariesDir, scriptsDir, testsDir, packageName, exportType);
     core.setOutput('passed', true);
   } catch (e) {
     const error = e as Error;
