@@ -59,9 +59,11 @@ const copySolidityFiles = (baseDir, filesDir, destinationDir) => {
             console.log(`Copied ${relativeFilePath} to ${filesDestination}`);
             // Copy the abi to the export directory using the same file name
             const fileName = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.'));
-            fs_extra_1.default.copySync(`${baseDir}/${fileName}.sol/${fileName}.json`, `${abiDestination}/${fileName}.json`, {
-                filter: allowMissingFiles,
-            });
+            const fileLocation = `${baseDir}/${fileName}.sol/${fileName}.json`;
+            if (fs_extra_1.default.existsSync(filePath))
+                fs_extra_1.default.copySync(fileLocation, `${abiDestination}/${fileName}.json`, {
+                    filter: allowMissingFiles,
+                });
             console.log(`Copied ${fileName}.json to ${abiDestination}`);
         }
         console.log(`Copied ${filesPaths.length} interfaces and ABIs`);

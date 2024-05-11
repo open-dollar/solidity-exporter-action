@@ -3,18 +3,6 @@ import path from 'path';
 import fse from 'fs-extra';
 import { transformRemappings } from './transformRemappings';
 
-const allowMissingFiles = (srcFile: string) => {
-  fse
-    .ensureFile(srcFile)
-    .then(() => {
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
-  return false;
-};
-
 export const copySolidityFiles = (baseDir: string, filesDir: string, destinationDir: string) => {
   const filesDestination = `${destinationDir}/${filesDir}`;
   const abiDestination = `${destinationDir}/abi`;
@@ -33,12 +21,13 @@ export const copySolidityFiles = (baseDir: string, filesDir: string, destination
       fse.outputFileSync(path.join(filesDestination, relativeFilePath), relativeFile);
       console.log(`Copied ${relativeFilePath} to ${filesDestination}`);
 
-      // Copy the abi to the export directory using the same file name
+      // Copy the abi to the export directory using the same file name. Skip if missing for tests, scripts, etc.
       const fileName = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.'));
-      fse.copySync(`${baseDir}/${fileName}.sol/${fileName}.json`, `${abiDestination}/${fileName}.json`, {
-        filter: allowMissingFiles,
-      });
-      console.log(`Copied ${fileName}.json to ${abiDestination}`);
+      const fileLocation = `${baseDir}/${fileName}.sol/${fileName}.json`;
+      if (fse.existsSync(filePath)) {
+        fse.copySync(fileLocation, `${abiDestination}/${fileName}.json`);
+        console.log(`Copied ${fileName}.json to ${abiDestination}`);
+      }
     }
 
     console.log(`Copied ${filesPaths.length} interfaces and ABIs`);
