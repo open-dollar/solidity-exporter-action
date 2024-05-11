@@ -49,7 +49,7 @@ const copySolidityFiles = (baseDir, filesDir, destinationDir) => {
             // Copy the abi to the export directory using the same file name. Skip if missing for tests, scripts, etc.
             const fileName = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.'));
             const fileLocation = `${baseDir}/${fileName}.sol/${fileName}.json`;
-            if (fs_extra_1.default.existsSync(filePath)) {
+            if (fs_extra_1.default.existsSync(fileLocation)) {
                 fs_extra_1.default.copySync(fileLocation, `${abiDestination}/${fileName}.json`);
                 console.log(`Copied ${fileName}.json to ${abiDestination}`);
             }
