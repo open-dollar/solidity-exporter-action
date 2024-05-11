@@ -31,6 +31,17 @@ const glob_1 = __importDefault(__nccwpck_require__(1957));
 const path_1 = __importDefault(__nccwpck_require__(1017));
 const fs_extra_1 = __importDefault(__nccwpck_require__(5630));
 const transformRemappings_1 = __nccwpck_require__(7616);
+const allowMissingFiles = (srcFile) => {
+    fs_extra_1.default
+        .ensureFile(srcFile)
+        .then(() => {
+        return true;
+    })
+        .catch(() => {
+        return false;
+    });
+    return false;
+};
 const copySolidityFiles = (baseDir, filesDir, destinationDir) => {
     const filesDestination = `${destinationDir}/${filesDir}`;
     const abiDestination = `${destinationDir}/abi`;
@@ -48,7 +59,9 @@ const copySolidityFiles = (baseDir, filesDir, destinationDir) => {
             console.log(`Copied ${relativeFilePath} to ${filesDestination}`);
             // Copy the abi to the export directory using the same file name
             const fileName = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.'));
-            fs_extra_1.default.copySync(`${baseDir}/${fileName}.sol/${fileName}.json`, `${abiDestination}/${fileName}.json`);
+            fs_extra_1.default.copySync(`${baseDir}/${fileName}.sol/${fileName}.json`, `${abiDestination}/${fileName}.json`, {
+                filter: allowMissingFiles,
+            });
             console.log(`Copied ${fileName}.json to ${abiDestination}`);
         }
         console.log(`Copied ${filesPaths.length} interfaces and ABIs`);

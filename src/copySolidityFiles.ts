@@ -3,6 +3,18 @@ import path from 'path';
 import fse from 'fs-extra';
 import { transformRemappings } from './transformRemappings';
 
+const allowMissingFiles = (srcFile: string) => {
+  fse
+    .ensureFile(srcFile)
+    .then(() => {
+      return true;
+    })
+    .catch(() => {
+      return false;
+    });
+  return false;
+};
+
 export const copySolidityFiles = (baseDir: string, filesDir: string, destinationDir: string) => {
   const filesDestination = `${destinationDir}/${filesDir}`;
   const abiDestination = `${destinationDir}/abi`;
@@ -23,7 +35,9 @@ export const copySolidityFiles = (baseDir: string, filesDir: string, destination
 
       // Copy the abi to the export directory using the same file name
       const fileName = filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.'));
-      fse.copySync(`${baseDir}/${fileName}.sol/${fileName}.json`, `${abiDestination}/${fileName}.json`);
+      fse.copySync(`${baseDir}/${fileName}.sol/${fileName}.json`, `${abiDestination}/${fileName}.json`, {
+        filter: allowMissingFiles,
+      });
       console.log(`Copied ${fileName}.json to ${abiDestination}`);
     }
 
