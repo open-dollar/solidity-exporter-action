@@ -28,7 +28,7 @@ export const transformRemappings = (file: string, filePath: string): string => {
   return fileLines
     .map(line => {
       // Just modify imports
-      if (!line.match(/} from '/g)) return line;
+      if (!line.match(/} from '/g) || !line.match(/^\s*import /i)) return line;
 
       const remapping = remappings.find(([find]) => line.match(find));
 
