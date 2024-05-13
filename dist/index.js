@@ -298,7 +298,7 @@ const transformRemappings = (file, filePath) => {
     return fileLines
         .map(line => {
         // Just modify imports
-        if (!line.match(/} from '/g) || !line.match(/^\s*import /i))
+        if (!line.match(/^\s*import|} from '/g))
             return line;
         const remapping = remappings.find(([find]) => line.match(find));
         const modulesKey = 'node_modules/';
