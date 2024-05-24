@@ -297,7 +297,10 @@ const transformRemappings = (file, filePath) => {
     }
     return fileLines
         .map(line => {
-        // Just modify imports
+        // Modify version
+        if (line.includes('pragma solidity 0.8.20;'))
+            return 'pragma solidity ^0.8.20;';
+        // Modify imports
         if (!line.match(/^\s*import|} from '/g))
             return line;
         const remapping = remappings.find(([find]) => line.match(find));
